@@ -1,39 +1,31 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, FlatList } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
 
-import { CATEGORIES, MEALS } from '../data/dummy-data';
-import MealItem from '../components/MealItem';
+import { CATEGORIES } from '../data/dummy-data';
+import MealList from '../components/MealList';
+import DefaultText from '../components/DefaultText';
 
 const CategoryMealsScreen = (props) => {
 
-  const renderMealItem = itemData => {
-    return ( 
-      <MealItem
-        title={itemData.item.title}
-        duration={itemData.item.duration}
-        complexity={itemData.item.complexity}
-        affordability={itemData.item.affordability}
-        image={itemData.item.imageUrl}
-        onSelectMeal={() => {}}
-      />
-    );
-  };
-
   const catId = props.navigation.getParam('categoryId');
 
-  // const selectedCategory = CATEGORIES.find(cat => cat.id === catId);
-  const displayedMeals = MEALS.filter(meal => meal.categoryIds.indexOf(catId) >= 0);
+  const availableMeals = useSelector(state => state.meals.filteredMeals);
 
-  return (
-    <View style={styles.screen}>
-      <FlatList
-        keyExtracteor={(item, index) => item.id}
-        renderItem={renderMealItem}
-        data={displayedMeals}
-        style={{width: '95%', height: '95%'}}
-      />
-    </View>
+  // const selectedCategory = CATEGORIES.find(cat => cat.id === catId);
+  const displayedMeals = availableMeals.filter(
+    meal => meal.categoryIds.indexOf(catId) >= 0
   );
+
+  if (displayedMeals.length === 0) {
+    return (
+      <View style={styles.content}>
+        <DefaultText>You have no meals in this catergory, based on the contents of the meals and the filters in effect.</DefaultText>
+      </View>
+    );
+  } else {
+    return <MealList listData={displayedMeals} navigation={props.navigation} />;
+  }
 };
 
 CategoryMealsScreen.navigationOptions = navigationData => {
@@ -47,10 +39,10 @@ CategoryMealsScreen.navigationOptions = navigationData => {
 };
 
 const styles = StyleSheet.create({
-  screen: {
+  content: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center'
   }
 });
 
