@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, Text, View, Switch, Platform } from 'react-native';
+import { StyleSheet, Text, View, Switch, Platform, Alert } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useDispatch } from 'react-redux';
 
@@ -40,6 +40,16 @@ const FiltersScreen = (props) => {
     };
 
     dispatch(setFilters(appliedFilters));
+
+    Alert.alert(
+      'SUCCESS',
+      'All Filters have been saved.',
+      [
+        { text: 'OK', onPress: () => {} }
+      ],
+      { cancelable: false }
+    );
+
   }, [isGlutenFree, isLactoseFree, isVegan, isVegetarian, dispatch]);
 
   useEffect(() =>{

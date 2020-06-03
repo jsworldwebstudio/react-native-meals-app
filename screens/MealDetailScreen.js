@@ -1,5 +1,5 @@
-import React, { useEffect, useCallback } from 'react';
-import { StyleSheet, Text, Image, View, ScrollView } from 'react-native';
+import React, { useEffect, useCallback, useRef } from 'react';
+import { StyleSheet, Text, Image, View, ScrollView, Alert } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -9,6 +9,7 @@ import ListItem from '../components/ListItem';
 import { toggleFavorite } from '../store/actions/meals';
 
 const MealDetailScreen = (props) => {
+  const initialRender = useRef(true);
   const mealId = props.navigation.getParam('mealId');
   const currentMealIsFavorite = useSelector(state =>
     state.meals.favoriteMeals.some(meal => meal.id === mealId)
@@ -30,6 +31,28 @@ const MealDetailScreen = (props) => {
 
   useEffect(() => {
     props.navigation.setParams({isFav: currentMealIsFavorite});
+
+    if(initialRender.current) {
+      initialRender.current = false;
+    } else if (currentMealIsFavorite) {
+        Alert.alert(
+          'SUCCESS!',
+          `${selectedMeal.title} has been added to the Favorites Meal List.`,
+          [
+            { text: 'OK', onPress: () => {} }
+          ],
+          { cancelable: false }
+        );
+    } else {
+      Alert.alert(
+        'SUCCESS!',
+        `${selectedMeal.title} has been removed from the Favorites Meal List.`,
+        [
+          { text: 'OK', onPress: () => {} }
+        ],
+        { cancelable: false }
+      );
+    }
   }, [currentMealIsFavorite]);
 
   return (
